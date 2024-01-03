@@ -14,7 +14,7 @@ export class App extends Component {
 
     afterRender = () => { };
 
-    render() {
+    _render() {
         const wrapper = document.createElement('div');
         this.parent.innerHTML = `
             ${(() => {
@@ -22,9 +22,7 @@ export class App extends Component {
                 return wrapper.innerHTML;
             })()}
         `;
-        globals.initialRender ? globals.afterRenders.push(this.afterRender) : this.afterRender();
     };
-
 
 };
 

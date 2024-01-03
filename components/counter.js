@@ -11,7 +11,7 @@ export class Counter extends Component {
         document.getElementById('dec-btn').onclick = (evt) => this.props.count.set(this.props.count.get() - 1);
     };
 
-    render() {
+    _render() {
         this.parent.innerHTML += `<div>
             <button id='dec-btn'>-</button>
             <p>${this.props.count.get()}</p>

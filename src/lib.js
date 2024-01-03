@@ -88,6 +88,14 @@ export class Component {
         };
     };
 
+    // The method to be overloaded
+    _render() { };
+
+    render() {
+        this._render();
+        globals.initialRender ? globals.afterRenders.push(this.afterRender) : this.afterRender();
+    };
+
 };
 
 export const globals = {
