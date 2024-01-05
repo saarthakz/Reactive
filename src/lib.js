@@ -1,5 +1,7 @@
-// Global variable to keep track of the currently accessed computed or effect
-let currentAccessed = null;
+export const globals = {
+    afterRenders: [],
+    initialRender: true,
+};
 
 export class Signal {
     constructor(initialValue) {
@@ -26,7 +28,7 @@ export class Signal {
 
     _notify() {
         for (let { component, parent } of this._components) {
-            component.render(parent);
+            parent.replaceChildren(component.render());
         };
 
         for (let { effect } of this._effects) {
@@ -55,9 +57,7 @@ export class Effect {
 
     _execute() {
         if (this._isStale) {
-            currentAccessed = this;
             this._effectFn();
-            currentAccessed = null;
         };
     };
 
@@ -78,7 +78,7 @@ export class Component {
     subscribeToProps() {
         for (const val of Object.values(this.props)) {
             if (val instanceof Signal)
-                val._subscribe({ type: 'component', component: this, parent });
+                val._subscribe({ type: 'component', component: this, parent: this.parent });
         };
     };
 
@@ -87,24 +87,5 @@ export class Component {
             if (val instanceof Signal) val._subscribe({ type: 'component', component: this, parent: this.parent });
         };
     };
-
-    // The method to be overloaded
-    _render() { };
-
-    render() {
-        this._render();
-        globals.initialRender ? globals.afterRenders.push(this.afterRender) : this.afterRender();
-    };
-
 };
 
-export const globals = {
-    afterRenders: [],
-    initialRender: true,
-};
-
-export function afterInitRender() {
-    console.log(globals);
-    globals.afterRenders.forEach((fn) => fn());
-    globals.initialRender = false;
-};

@@ -1,5 +1,6 @@
 import { Counter } from "../components/counter.js";
-import { Signal, Component, Effect, globals, afterInitRender } from "./lib.js";
+import { Signal, Component, Effect } from "./lib.js";
+import { _ } from "./template.js";
 
 export class App extends Component {
     constructor(parent, props) {
@@ -8,26 +9,19 @@ export class App extends Component {
             count: new Signal(0)
         };
         this.subToState();
-        new Effect(() => console.log(this.state.count.get()), [this.state.count]);
+        new Effect(() => console.log("Count is", this.state.count.get()), [this.state.count]);
 
     };
 
-    afterRender = () => { };
-
-    _render() {
-        const wrapper = document.createElement('div');
-        this.parent.innerHTML = `
-            ${(() => {
-                new Counter(wrapper, this.state).render();
-                return wrapper.innerHTML;
-            })()}
-        `;
+    render() {
+        return _(
+            'p: Paragraph Here',
+            {},
+            [new Counter(_('div')._, this.state).render()]
+        )._;
     };
-
 };
 
 const app = new App(document.getElementById("app"), {});
 
-app.render();
-
-afterInitRender();
+app.parent.replaceChildren(app.render());
